@@ -1,0 +1,10 @@
+@font-face {
+    font-family: "Inter";
+    src: url(../../../public/fonts/Inter-Regular.woff2) format("woff2");
+    font-weight: 900;
+    font-style: normal;
+}
+@import "general";
+@import "modal";
+@import "login";
+@import "notfound";

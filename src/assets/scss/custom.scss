@@ -1,0 +1,33 @@
+#captcha-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 16px 10px;
+    .ControlButtons-Container {
+        display: none!important;
+    }
+    @media screen and (max-width: 575px) {
+        min-width: 0;
+        max-width: 380px;
+    }
+}
+.FLresult {
+    flex: 1 1 100%;
+}
+input[name=smart-token] {
+    &.has-error {
+        &+ iframe {
+            border-radius: 11px;
+            border: 2px solid red;
+            box-shadow: 1px 1px red, inset 0px 0px 2px 2px red;
+        }
+    }
+}
+.card-price__form {
+    #captcha-container {
+        min-width: 0;
+        margin: 0 0 16px;
+    }
+}
+.request #captcha-container {
+    margin: 0 0 16px;
+}
