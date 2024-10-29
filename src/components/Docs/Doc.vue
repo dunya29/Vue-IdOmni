@@ -39,8 +39,6 @@ const resetContent = () => {
     showEditor.value = false
     descContent.value = props.content
 }
-//удалить 
-let publicPath = import.meta.env.BASE_URL
 </script>
 <template>
     <div class="item-doc item-doc--file">
@@ -50,7 +48,7 @@ let publicPath = import.meta.env.BASE_URL
         </div>
         <div class="card-anim item-doc__inner" :class="showEditor && 'res-hover'">
             <div class="item-doc__icon">
-                <img :src="publicPath + '/src/assets/img/'+iconURL" alt="">
+                <img :src="'/src/assets/img/'+iconURL" alt="">
             </div>
             <div class="item-doc__content">
                 <div class="item-doc__info">
@@ -80,11 +78,11 @@ let publicPath = import.meta.env.BASE_URL
                     </div>            
                 </div>
                 <div class="item-doc__action">
-                    <a :href="publicPath + '/src/assets/docs/'+docURL" download class="item-doc__btn" v-if="download">
+                    <a :href="'/src/assets/docs/'+docURL" download class="item-doc__btn" v-if="download">
                         <span>Скачать</span>
                         <svg><use xlink:href="../../assets/img/icons/sprite.svg#download"></use></svg>                 
                     </a>
-                    <a :href="publicPath + '/src/assets/docs/'+docURL" class="item-doc__btn" target="_blank" v-else>
+                    <a :href="'/src/assets/docs/'+docURL" class="item-doc__btn" target="_blank" v-else>
                         <span>Открыть</span>
                         <svg><use xlink:href="../../assets/img/icons/sprite.svg#ext-link"></use></svg>
                     </a>

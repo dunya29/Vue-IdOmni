@@ -9,7 +9,7 @@ import sortMediaQueries from 'postcss-sort-media-queries'
 import postcssMqLast from 'postcss-mq-last'
 
 export default defineConfig({
-  base: "/Vue-IdOmni/",
+  base: "/",
   plugins: [
     vue({
       template: {

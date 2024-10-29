@@ -155,42 +155,41 @@ onMounted(async() => {
         if (storeAuth.logged) {
             const login = storeAuth.userData.login
             const email = storeAuth.userData.email
-            if (urlMatchInvite) {
-                 try {
-                    const {data} = await inviteApi.checkInviteLink(routeId.value, link)
-                    if (data.length > 0) {
+            try {
+                const { data } = await inviteApi.checkUser(routeId.value, email)
+                if (data.length > 0) {
+                    pageLoad.value = true
+                    fetchSections()
+                } else {
+                    if (urlMatchInvite || localStorage.getItem("inviteLink")) {
                         try {
-                            const { data } = await inviteApi.checkUser(routeId.value, email)
-                            if (data.length === 0) {
-                                let newInviteUser = {
-                                    "login": login,
-                                    "email": email
+                            let pageInviteLink = link ? link : JSON.parse(localStorage.getItem("inviteLink")).link
+                            const {data} = await inviteApi.checkInviteLink(routeId.value, pageInviteLink)
+                            if (data.length > 0) {
+                                try {
+                                    let newInviteUser = {
+                                        "login": login,
+                                        "email": email
+                                    }
+                                    await inviteApi.setUser(routeId.value, newInviteUser )
+                                    pageLoad.value = true
+                                    fetchSections()
+                                } catch(err) {
+                                    console.log(err)
                                 }
-                                await inviteApi.setUser(routeId.value, newInviteUser )
+                            } else {
+                                router.push({name: 'access-denied'})
                             }
-                            pageLoad.value = true
-                            fetchSections()
                         } catch(err) {
                             console.log(err)
-                        }
-                    } else {
+                        } 
+                        localStorage.removeItem("inviteLink")
+                    }  else {
                         router.push({name: 'access-denied'})
-                    }
-                } catch(err) {
-                    console.log(err)
-                } 
-            } else {
-                try {
-                    const { data } = await inviteApi.checkUser(routeId.value, email)
-                    if (data.length > 0) {
-                        pageLoad.value = true
-                        fetchSections()
-                    } else {
-                        router.push({name: 'access-denied'})
-                    }
-                } catch(err) {
-                    console.log(err)
+                    }               
                 }
+            } catch(err) {
+                console.log(err)
             }
         } else {
             if (urlMatchInvite) {

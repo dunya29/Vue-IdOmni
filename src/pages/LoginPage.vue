@@ -80,36 +80,7 @@ const onSubmit = handleSubmit(async values => {
                     let inviteLink = localStorage.getItem("inviteLink")
                     if (inviteLink) {
                         let isInvite = JSON.parse(inviteLink)
-                        try {
-                            const {data} = await inviteApi.checkInviteLink(isInvite.id, isInvite.link)
-                            if (data.length > 0) {
-                                try {
-                                    const {data} = await inviteApi.checkUser(isInvite.id, params.email )
-                                    if (data.length === 0) {
-                                        try {
-                                            let newInviteUser = {
-                                                "login": params.login,
-                                                "email": params.email
-                                            }
-                                            await inviteApi.setUser(params.id, newInviteUser )
-                                            router.push({name: 'docs', params: { id: params.id }})
-                                        } catch(err) {
-                                            console.log(err)
-                                        }
-                                    } else {
-                                        router.push({name: 'docs', params: { id: params.id }})
-                                    }                           
-                                } catch (err) {
-                                    console.log(err)
-                                }
-                            } else {
-                                router.push({name: 'access-denied'})
-                            }
-                        } catch(err) {
-                            console.log(err)
-                        } finally {
-                            localStorage.removeItem("inviteLink")
-                        }
+                        router.push({name: 'docs', params: { id: isInvite.id }})
                     } else {
                         router.push({name: 'catalog'})
                     }
