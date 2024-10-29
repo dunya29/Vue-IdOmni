@@ -1,5 +1,5 @@
 <script setup>
-import { inviteApi, authApi } from '@/api/api';
+import { authApi } from '@/api/api';
 import Contacts from '@/components/Contacts.vue';
 import { isEmail } from '@/functions/validation';
 import { useForm } from 'vee-validate';
@@ -13,7 +13,6 @@ const emailVal = ref("")
 const emailErrVal = ref("")
 const passwordShow = ref(false)
 const passwordTextType = ref(false)
-const passwordVal = ref("")
 const passwordErrVal = ref(0)
 const schema = {
   email: async (val) => {

@@ -14,10 +14,15 @@ export const useAuthStore = defineStore('auth', {
         }
     }),
     actions: {
-        logIn(params) {
-            this.logged = true
-            this.userData = {...this.userData, ...params}
-            localStorage.setItem("user",JSON.stringify(params))
+        async logIn(params) {
+            try {
+                await authApi.logIn(params)
+                this.logged = true
+                this.userData = {...this.userData, ...params}
+                localStorage.setItem("user",JSON.stringify(params))
+            } catch(err) {{
+                console.log(err)
+            }}
         },
         async isLogIn() {
             try {
