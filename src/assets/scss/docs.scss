@@ -1,0 +1,284 @@
+.item-doc {
+    display: flex;
+    margin-bottom: 24px;
+    @media (max-width: $bp2) {
+       margin-bottom: 10px;
+    }
+    &:last-child {
+        margin-bottom: 0;
+    }
+    h5 {
+        max-width: 700px;
+        font-weight: 600;
+        min-height: 24px;
+        display: flex;
+        align-items: center;
+    }
+    &--file {
+        h5 {
+            min-height: 32px;
+        }
+        .item-doc__inner, .item-doc__content {
+            align-items: start;
+        }
+    }
+    &__handle {
+        flex: 0 0 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(gray, .5);
+        cursor: grab;
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+    }
+    &__inner {
+        flex: 1 1 auto;
+        padding: 24px 30px;
+        border: 3px solid var(--black);
+        display: flex;
+        align-items: center;
+        @media (max-width: $bp2) {
+           padding: 20px;
+        }
+        @media (max-width: $bp4) {
+            padding: 10px;
+            border-width: 2px;
+            align-items: flex-start;
+        }
+    }
+    &__desc {
+        flex: 1 1 auto;
+        max-width: 700px;
+        .read-more.more-hidden .page-content {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        .editor, .page-content, &-empty {
+            margin-top: 20px;
+        }
+        .page-content:empty {
+            margin-top: 0;
+        }
+        &-btns {
+            display: flex;
+            margin: 32px -4px -8px;
+            .btn {
+                flex: 1 1 calc(50% - 8px);
+                margin: 0 4px 8px;
+            }
+        }
+        @media (max-width: $bp2) {
+            max-width: 500px;
+        }
+    }
+    &__icon {
+        flex: 0 0 32px;
+        width: 32px;
+        height: 32px;
+        margin-right: 12px;
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            margin: auto;
+        }
+    }
+    &__content {
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 20px;
+        align-items: center;
+        @media (max-width: 768.98px) {
+            grid-template-columns: 1fr;
+        }
+    }
+    &__action {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+    &__btn {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        cursor: pointer;
+        span {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--black);
+            @media (max-width: $bp3) {
+                font-size: 16px;
+            }
+        }
+        img, svg {
+            flex: 0 0 24px;
+            width: 24px;
+            height: 24px;
+            margin-left: 8px;
+        }
+        svg {
+            fill: var(--black);
+        }
+        img {
+            object-fit: contain;
+        }
+        &--del {
+            margin-left: 18px;
+        }
+    }
+}
+.docs-p {
+    &__top {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 20px;
+        align-items: start;
+    }
+    &__form {
+        margin-top: 100px;
+        h2 {
+            margin-bottom: 40px;
+        }
+        .form__footer {
+            margin-top: 60px;
+        }
+    }
+    &__pages {
+        margin-top: 24px;
+    }
+}
+.sec-docs {
+    margin-bottom: 60px;
+    &:last-child {
+        margin-bottom: 0;
+    }
+    &__top {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 20px;
+        align-items: center;
+    }
+    &__title {
+        max-width: 700px;
+        display: flex;
+        align-items: center;
+        textarea {
+            text-transform: uppercase;
+        }
+    }
+    &__del {
+        color: var(--gray);
+        display: inline-flex;
+        align-items: center;
+        margin-top: 24px;
+        transition: all .3s linear;
+        svg {
+            fill: var(--gray);
+            flex: 0 0 24px;
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            transition: all .3s linear;
+        }
+        &:hover {
+            color: var(--black);
+            svg {
+                fill: var(--black);
+            }
+        }
+    }
+    &__items {
+        margin-top: 24px;
+    }
+}
+.add-section, .add-page {
+    margin-top: 60px;
+    .form {
+        display: flex;
+        align-items: center;
+        .form__items {
+            flex: 1 1 auto;
+        }
+        .item-form { 
+            input {
+                border-bottom: 0;
+            }
+        }
+    }
+}
+.add-section {
+    .form {
+        .item-form {        
+            input, input::placeholder {
+                text-transform: uppercase;
+            }
+        }
+    }
+}
+.item-user {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(#000000, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    &:last-child {
+        margin-bottom: 0;
+    }
+    &__del {
+        flex: 0 0 16px;
+        line-height: 1;
+        svg {
+            width: 16px;
+            height: 16px;
+            transition: all .3s linear;
+        }
+        &:hover {
+            svg {
+                fill: var(--primary-color);
+            }
+        }
+    }
+}
+.item-acc {
+    &.open .accordion__header {
+        svg {
+            transform: rotate(180deg);
+        }
+    }
+    .accordion__header {
+        display: grid;
+        grid-template-columns: 1fr 24px;
+        align-items: center;
+        gap: 16px;
+        svg {
+            fill: black;
+            transition: all .3s linear;
+        }
+    }
+    .accordion__content {
+        padding-top: 12px;
+    }
+}
+.doc-form {
+    .form__footer {
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: -4px;
+        margin-right: -4px;
+        margin-bottom: -8px;
+        .btn {
+            flex: 1 1 calc(50% - 8px);
+            margin: 0 4px 8px;
+        }
+    }
+}

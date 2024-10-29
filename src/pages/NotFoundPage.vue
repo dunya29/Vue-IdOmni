@@ -9,10 +9,7 @@ import { RouterLink } from 'vue-router';
             <div class="container">
                 <h1>Страница не найдена</h1>
                 <p class="h4">Страница,которую вы ищите, не существует. Возможно она устарела, удалена или ссылка на нее была введена неверно.</p>  
-                <div class="btn-main">
-                    <RouterLink to="/login" class="btn-reset btn-main-body">На главную</RouterLink>
-                    <div></div>
-                </div>
+                <RouterLink :to="{ name: 'login' }" class="btn main-btn"><span>На главную</span></RouterLink>
             </div>
         </section>
     </PageWrap>

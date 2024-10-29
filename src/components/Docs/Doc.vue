@@ -1,55 +1,96 @@
 <script setup>
-import { inject, onMounted, ref, watch } from 'vue';
+import { inject, ref } from 'vue';
 const props = defineProps({
-    name: String,
     id: Number,
+    name: String,
+    content: String,
     docURL: String,
     iconURL: String,
     download: Boolean
 })
 import { useAuthStore } from '@/store/auth'
-const { isAdmin } = useAuthStore()
-const docNameRef = ref(null)
+import Tiptap from '../Wysiwyg/Tiptap.vue';
+import TextareaEdit from '../TextareaEdit.vue';
+import ReadMore from '@/common/ReadMore.vue';
+const storeAuth = useAuthStore()
 const delDoc = inject("delDoc")
 const changeDocName = inject("changeDocName")
-const docNameValue = ref(props.name)
-const docNameOnInput = () => {
-    docNameRef.value.style.height = ''; 
-    docNameRef.value.style.height = docNameRef.value.scrollHeight + 'px'
+const changeDocDesc = inject("changeDocDesc")
+const docNameOnChange = (text) => {
+    changeDocName( props.id, text)
 }
-const docNameOnChange = async() => {
+const showEditor = ref(false)
+const descContent = ref(props.content)
+const setDescContent = async() => {
     let data = {
-        "name": docNameValue.value 
+        "content": descContent.value
     } 
-    changeDocName(props.id,data)
+    try {
+       await changeDocDesc(props.id, data)   
+       showEditor.value = false 
+    } catch(err) {
+        console.log(err)
+    } 
 }
-onMounted(() => {
-    window.addEventListener("resize", docNameOnInput);
-})
-watch(docNameRef, docNameOnInput)
+const updateDescContent = (content) => {
+    descContent.value = content
+}
+const resetContent = () => {
+    showEditor.value = false
+    descContent.value = props.content
+}
+//удалить 
+let publicPath = import.meta.env.BASE_URL
 </script>
 <template>
-    <div class="item-doc" :data-id="id">
-        <div class="item-doc__handle" v-if="isAdmin">
+    <div class="item-doc item-doc--file">
+        <div class="item-doc__handle" v-if="storeAuth.userData.isAdmin">
             <svg><use xlink:href="../../assets/img/icons/sprite.svg#chevron-top"></use></svg>
             <svg><use xlink:href="../../assets/img/icons/sprite.svg#chevron-bot"></use></svg>
         </div>
-        <div class="card-anim item-doc__inner">
+        <div class="card-anim item-doc__inner" :class="showEditor && 'res-hover'">
             <div class="item-doc__icon">
-                <img :src="'/src/assets/img/'+iconURL" alt="">
+                <img :src="publicPath + '/src/assets/img/'+iconURL" alt="">
             </div>
             <div class="item-doc__content">
-                <h5><textarea ref="docNameRef" v-model="docNameValue" @input="()=>docNameOnInput()" @change="()=>docNameOnChange()"></textarea></h5>
+                <div class="item-doc__info">
+                    <h5>
+                        <TextareaEdit v-if="storeAuth.userData.isAdmin" :initVal="name" @onChange="docNameOnChange" />
+                        <span v-else>{{ name }}</span>
+                    </h5> 
+                    <div class="item-doc__desc">
+                        <div class="pointer item-doc__desc-empty" v-if="!content.length && storeAuth.userData.isAdmin && !showEditor" @click="() => showEditor = true"><p>Введите описание</p></div>
+                        <ReadMore v-if="!showEditor">
+                            <template #default>
+                                <div class="page-content" :class="storeAuth.userData.isAdmin && 'pointer'" v-html="content" @click="() => storeAuth.userData.isAdmin ? showEditor = true : null"></div>
+                            </template>
+                        </ReadMore>
+                        <Tiptap v-else 
+                        :content="descContent"
+                        @updateValue="updateDescContent"
+                        />
+                        <div class="item-doc__desc-btns" v-if="showEditor">
+                            <button type="button" class="btn primary-btn" @click="() =>setDescContent()">
+                                <span>Сохранить</span>
+                            </button>
+                            <button type="button" class="btn stroke-btn" @click="() =>resetContent()">
+                                <span>Отменить</span>
+                            </button>
+                        </div>
+                    </div>            
+                </div>
                 <div class="item-doc__action">
-                    <a :href="'/src/assets/docs/'+docURL" download class="item-doc__btn" v-if="download">
+                    <a :href="publicPath + '/src/assets/docs/'+docURL" download class="item-doc__btn" v-if="download">
                         <span>Скачать</span>
-                        <img src="../../assets/img/icons/download.svg" alt="">                   
+                        <svg><use xlink:href="../../assets/img/icons/sprite.svg#download"></use></svg>                 
                     </a>
-                    <a :href="'/src/assets/docs/'+docURL" class="item-doc__btn" target="_blank" v-else>
+                    <a :href="publicPath + '/src/assets/docs/'+docURL" class="item-doc__btn" target="_blank" v-else>
                         <span>Открыть</span>
-                        <img src="../../assets/img/icons/more.svg" alt="">
+                        <svg><use xlink:href="../../assets/img/icons/sprite.svg#ext-link"></use></svg>
                     </a>
-                    <button v-if="isAdmin" @click="()=>delDoc(id)" class="btn-reset item-doc__btn item-doc__btn--del"><svg><use xlink:href="../../assets/img/icons/sprite.svg#del"></use></svg> </button>  
+                    <button v-if="storeAuth.userData.isAdmin" @click="()=>delDoc(id)" class="btn item-doc__btn item-doc__btn--del">
+                        <img src="../../assets/img/icons/bin.svg" alt="">
+                    </button>  
                 </div>          
             </div>
         </div>

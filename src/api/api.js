@@ -1,37 +1,40 @@
 import axios from "axios"
 const instance = axios.create({
   baseURL: 'https://30e3c61cecffef28.mokky.dev/',
-  withCredentials: true,
- /*  headers: {
+  /*  withCredentials: true,
+ headers: {
     "API-KEY": ""
   } */
 })
-
-export const usersApi = {
+export const authApi = {
   getUser(email) {
     return instance.get('users?email=' + email)
   },
   setUser(data) {
     return instance.post('users', data)
   },
-  checkUser(email,password) {
+  logIn(email,password) {
     return instance.get(`users?email=${email}&password=${password}`)
   },
-}
-export const loginApi = {
-  checkAdmin(email) {
-    return instance.get('auth?email=' + email)
-  },
-/*   logIn(email, password) {
-    return instance.post('auth/login', { email, password })
+  getAuth() {
+    //
   },
   logOut() {
-    return instance.delete('auth/login')
-  }, */
+    //
+  },
+  forbidden(email) {
+    //
+  },
+  forgotPassword(email) {
+    //
+  },
+  recoveryPassword(email, password) {
+    //
+  }
 }
 export const catalogApi = {
   getPages() {
-    return instance.get('catalog')
+    return instance.get('catalog?&sortBy=orderId')
   },
   delPage(id) {
     return instance.delete('catalog/' + id)
@@ -46,10 +49,28 @@ export const catalogApi = {
   changePageName(id, data) {
     return instance.patch('catalog/' + id, data)
   },
+  sortPages(id, data) {
+    return instance.patch('catalog/' + id, data)
+  }
+}
+export const sectionsApi = {
+  getSections(pageId) {
+    return instance.get('sections')
+  },
+  delSection(pageId, id) {
+    return instance.delete('sections/' + id)
+  },
+  postSection(pageId, data) {
+    return instance.post('sections', data )
+  },
+  changeSectionTitle(pageId, id, data) {
+    return instance.patch('sections/' + id, data)
+  }
 }
 export const docsApi = {
-  getDocs(pageId) {
-    return instance.get('docs?sortBy=parentId')
+  getDocs(pageId, ids) {
+    let queryString = ids.map(item => 'sectionId[]=' + item).join("&")
+    return instance.get(`docs?${queryString}&sortBy=orderId`)
   },
   delDoc(pageId, id) {
     return instance.delete('docs/' + id)
@@ -62,6 +83,9 @@ export const docsApi = {
     } */)
   },
   changeDocName(pageId, id, data) {
+    return instance.patch('docs/' + id, data)
+  },
+  changeDocDesc(pageId, id, data) {
     return instance.patch('docs/' + id, data)
   },
   sortDocs(pageId, id, data) {

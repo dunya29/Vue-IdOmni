@@ -1,0 +1,82 @@
+[
+    {
+        "id": 1,
+        "name": "1-Инструкция по системе управления Evolution CMS в формате видео. mp4, 256 мб.",
+        "content": "<h5>Инструкция по системе управления Evolution CMS в формате видео.<br></h5><ol><li><p>Инструкция по системе управления Evolution CMS в формате видео.</p></li><li><p>Инструкция по системе управления Evolution CMS в формате видео.</p></li><li><p>Инструкция по системе управления Evolution CMS в формате видео.</p></li></ol><p><br></p><ul><li><p>Инструкция по системе управления Evolution CMS в формате видео.</p></li><li><p>Инструкция по системе управления Evolution CMS в формате видео.</p></li><li><p>Инструкция по системе управления Evolution CMS в формате видео.</p><p><br></p></li></ul><p><strong><em>Инструкция по системе управления Evolution CMS в </em></strong><a target=\"_blank\" rel=\"noopener noreferrer nofollow\" href=\"https://omniagency.ru/\"><strong><em>формате видео.</em></strong></a></p>",
+        "docURL": "polzovatelskoe-soglashenie.pdf",
+        "iconURL": "icons/doc.svg",
+        "download": false,
+        "sectionId": 1,
+        "orderId": 1
+    },
+    {
+        "id": 2,
+        "name": "1-Инструкция по системе управления Evolution CMS в формате видео. mp4, 256 мб.",
+        "content": "<p>Инструкция по системе управления Evolution CMS в формате видео. Инструкция по системе управления Evolution CMS в формате видео. Инструкция по системе управления Evolution CMS в формате видео.</p>",
+        "docURL": "polzovatelskoe-soglashenie.pdf",
+        "iconURL": "icons/doc.svg",
+        "download": false,
+        "sectionId": 2,
+        "orderId": 1
+    },
+    {
+        "id": 3,
+        "name": "2-Инструкция по системе управления Evolution CMS в формате видео. mp4, 256 мб.",
+        "content": "<p>Инструкция по системе управления Evolution CMS в формате видео. Инструкция по системе управления Evolution CMS в формате видео. Инструкция по системе управления Evolution CMS в формате видео.</p>",
+        "docURL": "polzovatelskoe-soglashenie.pdf",
+        "iconURL": "icons/doc.svg",
+        "download": false,
+        "sectionId": 2,
+        "orderId": 2
+    },
+    {
+        "id": 4,
+        "name": "2-Инструкция по системе управления Evolution CMS в формате видео. mp4, 256 мб",
+        "content": "<p>Инструкция по системе управления Evolution CMS в формате видео. Инструкция по системе управления Evolution CMS в формате видео.</p>",
+        "docURL": "polzovatelskoe-soglashenie.pdf",
+        "iconURL": "icons/doc.svg",
+        "download": false,
+        "sectionId": 1,
+        "orderId": 2
+    },
+    {
+        "id": 5,
+        "name": "3-Инструкция по системе управления. mp4, 256 мб.",
+        "content": "<p>Инструкция по системе управления Evolution CMS в формате видео. Инструкция по системе управления Evolution CMS в формате видео. Инструкция по системе управления Evolution CMS в формате видео.</p>",
+        "docURL": "polzovatelskoe-soglashenie.pdf",
+        "iconURL": "icons/doc.svg",
+        "download": false,
+        "sectionId": 2,
+        "orderId": 3
+    },
+    {
+        "id": 6,
+        "name": "4-Инструкция по системе управления. mp4, 256 мб.",
+        "content": "<p>Инструкция по системе управления Evolution CMS в формате видео. Инструкция по системе управления Evolution CMS в формате видео. Инструкция по системе управления Evolution CMS в формате видео.</p>",
+        "docURL": "polzovatelskoe-soglashenie.pdf",
+        "iconURL": "icons/doc.svg",
+        "download": false,
+        "sectionId": 2,
+        "orderId": 4
+    },
+    {
+        "id": 7,
+        "name": "5-Инструкция по системе управления. mp4, 256 мб.",
+        "content": "<p>Инструкция по системе управления Evolution CMS в формате видео. Инструкция по системе управления Evolution CMS в формате видео. Инструкция по системе управления Evolution CMS в формате видео.</p>",
+        "docURL": "polzovatelskoe-soglashenie.pdf",
+        "iconURL": "icons/doc.svg",
+        "download": false,
+        "sectionId": 2,
+        "orderId": 5
+    },
+    {
+        "id": 8,
+        "name": "3-Инструкция по системе управления Evolution CMS в формате видео. mp4, 256 мб.",
+        "content": "<p>Инструкция по системе управления Evolution CMS в формате видео. Инструкция по системе управления Evolution CMS в формате видео. Инструкция по системе управления Evolution CMS в формате видео.</p>",
+        "docURL": "polzovatelskoe-soglashenie.pdf",
+        "iconURL": "icons/doc.svg",
+        "download": false,
+        "sectionId": 1,
+        "orderId": 3
+    }
+]

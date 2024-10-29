@@ -15,3 +15,18 @@ export function disableScroll() {
     document.body.style.paddingRight = paddingValue
     document.body.classList.add("noscroll");
 }
+// custom scroll FF
+export const setScrollbarColor = () => {
+    let isFirefox = typeof InstallTrigger !== 'undefined';
+    const customScroll = document.querySelectorAll(".custom-scroll")
+    if (isFirefox) {
+      document.documentElement.style.scrollbarColor = "#000000 #ffffff"
+      if (customScroll) {
+        customScroll.forEach(item => { item.style.scrollbarColor = "#000000 #ffffff" })
+      }
+    }
+}
+//return scroll Position
+export const scrollPos = () => {
+    return window.pageYOffset || document.documentElement.scrollTop
+}

@@ -1,83 +1,75 @@
 <script setup>
-import { onMounted, provide, reactive, ref } from 'vue';
-import { docsApi, inviteApi } from '@/api/api';
-import AddDoc from '@/components/Docs/AddDoc.vue';
+import { onMounted, provide, ref } from 'vue';
+import { docsApi, inviteApi, sectionsApi } from '@/api/api';
 import Section from '@/components/Docs/Section.vue';
 import Invite from '@/components/Invite/Invite.vue';
 import { useAuthStore } from '@/store/auth'
 import { useRoute, useRouter } from 'vue-router';
 import PageWrap from '@/components/PageWrap.vue';
+import AddSection from '@/components/Docs/AddSection.vue';
 const route = useRoute()
 const router = useRouter()
-const items = ref([])
-const totalCount = ref(0)
+const docs = ref([])
+const sectionTotal = ref(0)
 const sections = ref([])
-const formSuccess = ref(0)
 const sortFetchCount = ref(0)
-const loading = reactive({
-    setDocsLoading: false,
-    addDocLoading: false,
-})
-const routeId = ref(0)
-const { isAdmin } = useAuthStore()
-const fetchDocs = async() => {
-    loading.setDocsLoading = true
+const docsLoading = ref(false)
+const addSecLoading = ref(false)
+const routeId = ref(null)
+const storeAuth = useAuthStore()
+const pageLoad = ref(false)
+const addSecForm = ref(null)
+const fetchSections = async () => {
+    docsLoading.value = true
     try {
-        const { data } = await docsApi.getDocs(routeId.value)
-        let newData = data.reduce((acc, current) => {
-            let findItem = acc.find(item => item.find(el => el.parentId == current.parentId))
-            if (findItem ) {
-                let idx = acc.findIndex(item => item == findItem)
-                acc = [...acc]
-                 acc[idx].push(current)
-            } else {
-                acc = [...acc, [current]]
-            }
-            return acc
-        }, [])
-        items.value = [...newData].map(item => item.sort((a,b) => a.orderId - b.orderId))
-        sections.value = items.value.map(item => {
-            let data = {
-                id: item[0].parentId,
-                title: item[0].parentTitle
-            }
-            return data
-        })
-        totalCount.value = data.length
+        const {data} = await sectionsApi.getSections(routeId.value)
+        sections.value = [...data]
+        sectionTotal.value = data.length
+        fetchDocs()
     } catch(err) {
-        router.push("/notfound")
+        console.log(err)
+        docsLoading.value = false
+    } 
+}
+const fetchDocs = async () => {
+    docsLoading.value = true
+    try {
+        let ids = sections.value.map(item => item.id)
+        const {data} = await docsApi.getDocs(routeId.value, ids)
+        docs.value = [...data]
+        sections.value = sections.value.map(sec => {
+            return {...sec, "docs": data.filter(doc => doc.sectionId === sec.id)}
+        })
+    } catch(err) {
+        console.log(err)
     } finally {
-        loading.setDocsLoading = false
+       docsLoading.value = false
+    }
+}
+const addNewDoc = async(data) => {
+    try {
+        await docsApi.postDoc(routeId.value, data)
+        fetchDocs()
+        
+    } catch(err) {
+        console.log(err)
     }
 }
 const delDoc = async(id) => {
-    loading.setDocsLoading = true
+    docsLoading.value = true
     try {
         const { data } = await docsApi.delDoc(routeId.value, id)
         fetchDocs()
     } catch(err) {
       console.log(err)
-      loading.setDocsLoading = false
+      docsLoading.value = false
     }
 } 
-const addNewDoc = async(formData) => {
-   loading.addDocLoading = true
-    try {
-        await docsApi.postDoc(routeId.value, formData)
-        fetchDocs()
-        formSuccess.value++
-        
-    } catch(err) {
-        console.log(err)
-    } finally {
-        loading.addDocLoading = false
-    }
-}
 const sortDocs = async(thisItem, changedItemsArr) => {
-    loading.setDocsLoading = true
+    docsLoading.value = true
     let updateCount = changedItemsArr.length + 1
     try {
-        await docsApi.sortDocs(routeId.value, thisItem.itemId, { "orderId": thisItem.itemOrderId })
+        await docsApi.sortDocs(routeId.value, thisItem.id, { "orderId": thisItem.orderId })
         sortFetchCount.value++
         changedItemsArr.forEach(async(item) => {
             try {
@@ -96,78 +88,143 @@ const sortDocs = async(thisItem, changedItemsArr) => {
     }
 
 }
-const changeDocName = async(id, data) => {
+const changeDocName = async(id, text) => {
+    let data = {
+        "name": text
+    }
     try {
         await docsApi.changeDocName(routeId.value, id, data)
+    } catch(err) {
+      console.log(err)
+    }
+} 
+const changeDocDesc = async(id, data) => {
+    try {
+        await docsApi.changeDocDesc(routeId.value, id, data)
         fetchDocs()
     } catch(err) {
       console.log(err)
     }
 } 
+const addNewSec = async(data) => {
+    addSecLoading.value = true
+    try {
+        await sectionsApi.postSection(routeId.value, data)
+        addSecForm.value.resetForm()  
+        fetchSections()
+        
+    } catch(err) {
+        console.log(err)
+    } finally {
+        addSecLoading.value = false
+    }
+}
+const delSec = async(id) => {
+    docsLoading.value = true
+    try {
+        await sectionsApi.delSection(routeId.value, id)
+        fetchSections()
+    } catch(err) {
+      console.log(err)
+      docsLoading.value = false
+    }
+} 
+const changeSecName = async(id, text) => {
+    let data = {
+        "title": text
+    } 
+    try {
+        await sectionsApi.changeSectionTitle(routeId.value, id, data)
+    } catch(err) {
+      console.log(err)
+    }
+} 
+provide('addNewDoc', addNewDoc)
 provide('delDoc', delDoc)
 provide('changeDocName', changeDocName)
+provide('changeDocDesc', changeDocDesc)
+
 onMounted(async() => {
-    const user = localStorage.getItem('user')
     routeId.value = route.params.id
-    let urlMatchInvite = route.fullPath.match("invite")
-    let link = urlMatchInvite ? route.fullPath.substring(urlMatchInvite.index + 7) : ""
-    if (user) {
-        if (urlMatchInvite) {
-            try {
-                const {data} = await inviteApi.checkInviteLink(routeId.value, link)
-                if (data.length > 0) {
-                    fetchDocs()
-                } else {
-                    router.push("/access-denied")
+    if (storeAuth.userData.isAdmin) {
+        pageLoad.value = true
+        fetchSections()
+    } else {
+        let urlMatchInvite = route.fullPath.match("invite")
+        let link = urlMatchInvite ? route.fullPath.substring(urlMatchInvite.index + 7) : ""
+        if (storeAuth.logged) {
+            const login = storeAuth.userData.login
+            const email = storeAuth.userData.email
+            if (urlMatchInvite) {
+                 try {
+                    const {data} = await inviteApi.checkInviteLink(routeId.value, link)
+                    if (data.length > 0) {
+                        try {
+                            const { data } = await inviteApi.checkUser(routeId.value, email)
+                            if (data.length === 0) {
+                                let newInviteUser = {
+                                    "login": login,
+                                    "email": email
+                                }
+                                await inviteApi.setUser(routeId.value, newInviteUser )
+                            }
+                            pageLoad.value = true
+                            fetchSections()
+                        } catch(err) {
+                            console.log(err)
+                        }
+                    } else {
+                        router.push({name: 'access-denied'})
+                    }
+                } catch(err) {
+                    console.log(err)
+                } 
+            } else {
+                try {
+                    const { data } = await inviteApi.checkUser(routeId.value, email)
+                    if (data.length > 0) {
+                        pageLoad.value = true
+                        fetchSections()
+                    } else {
+                        router.push({name: 'access-denied'})
+                    }
+                } catch(err) {
+                    console.log(err)
                 }
-            } catch(err) {
-                console.log(err)
             }
         } else {
-            const email = JSON.parse(user).email
-            try {
-                const { data } = await inviteApi.checkUser(routeId.value, email)
-                if (data.length > 0) {
-                    fetchDocs()
-                } else {
-                    router.push("/access-denied")
-                }
-            } catch(err) {
-                console.log(err)
+            if (urlMatchInvite) {
+                localStorage.setItem("inviteLink", JSON.stringify({id:routeId.value, link}))
             }
+            router.push({name: 'login'})
         }
-    } else {
-        if (urlMatchInvite) {
-            localStorage.setItem("inviteLink", JSON.stringify({id:routeId.value, link}))
-        }
-        router.push("/login")
     }
 })
 </script>
 <template>
     <PageWrap>
-        <section class="section intro clients-docs">
+        <section class="section intro docs-p" v-if="pageLoad">
             <div class="container">
-                <div class="sec-top">
-                    <h1>nn-dobro.ru</h1>
-                    <p>На этой странице вы найдете инструкции и полезные документы для работы с ваши сайтом</p>
-                </div>
-                <Invite :routeId="routeId" v-if="isAdmin"/>
-                <div class="clients-docs__items" v-if="totalCount" :class="loading.setDocsLoading && 'loading'">
-                    <Section v-for="(arr,idx) in items"
-                    :key="idx"
-                    :id="sections[idx].id"
-                    :title="sections[idx].title"
-                    :item="arr"
+                <div class="sec-top docs-p__top">
+                    <div class="docs-p__content">
+                        <h1>nn-dobro.ru</h1>
+                        <p>На этой странице вы найдете инструкции и полезные документы для работы с ваши сайтом</p>
+                    </div>
+                    <Invite v-if="storeAuth.userData.isAdmin"/>
+                </div>              
+                <div class="docs-p__items" v-if="sectionTotal" :class="docsLoading && 'loading'">
+                    <Section v-for="item in sections"
+                    :key="item.id"
+                    :id="item.id"
+                    :title="item.title"
+                    :item="item.docs"
+                    :isAdmin="storeAuth.userData.isAdmin"
                     @sortDocs="sortDocs"
-                    />
+                    @delSec="delSec"
+                    @changeSecName="changeSecName"
+                    /> 
                 </div>
-                <AddDoc v-if="isAdmin"
-                :addDocLoading="loading.addDocLoading"
-                :sections="sections" 
-                :formSuccess="formSuccess"
-                @addNewDoc="addNewDoc" 
-                />
+                <AddSection ref="addSecForm" v-if="storeAuth.userData.isAdmin" :addSecLoading="addSecLoading" @addNewSec="addNewSec"/>
             </div>
         </section>
     </PageWrap>

@@ -11,8 +11,9 @@ const router = createRouter({
     { path: '/catalog/:id', name: 'docs', component: () => import('../pages/DocsPage.vue'), meta: { transition: 'fadeUp' } },
     { path: '/access-denied', name: 'access-denied', component: () => import('../pages/AccessDenied.vue') },
     { path: '/forbidden', name: 'forbidden', component: () => import('../pages/ForbiddenPage.vue') },
+    { path: '/forgot-password', name: 'forgot-password', component: () => import('../pages/ForgotPassPage.vue') },
     { path: '/recovery', name: 'recovery', component: () => import('../pages/RecoveryPage.vue') },
-    { path: '/:pathMatch(.*)*', name: 'notfound', component: () => import('../pages/NotFoundPage.vue') },
+    { path: '/:pathMatch(.*)*', name: 'notfound', component: () => import('../pages/NotFoundPage.vue') }
   ]
 })
 

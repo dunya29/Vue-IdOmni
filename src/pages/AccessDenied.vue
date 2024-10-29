@@ -8,10 +8,7 @@ import PageWrap from '@/components/PageWrap.vue';
             <div class="container">
                 <h1>Доступ ограничен</h1>
                 <p class="h4">Вы не имеете доступа к данной странице</p>  
-                <div class="btn-main">
-                    <RouterLink to="/catalog" class="btn-reset btn-main-body">Вернуться в каталог</RouterLink>
-                    <div></div>
-                </div>
+                <RouterLink to="/catalog" class="btn main-btn"><span>Вернуться в каталог</span></RouterLink>
             </div>
         </section>
     </PageWrap>

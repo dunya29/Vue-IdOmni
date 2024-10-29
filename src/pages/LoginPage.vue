@@ -1,5 +1,5 @@
 <script setup>
-import { inviteApi, loginApi, usersApi } from '@/api/api';
+import { inviteApi, authApi } from '@/api/api';
 import Contacts from '@/components/Contacts.vue';
 import { isEmail } from '@/functions/validation';
 import { useForm } from 'vee-validate';
@@ -13,14 +13,17 @@ const emailVal = ref("")
 const emailErrVal = ref("")
 const passwordShow = ref(false)
 const passwordTextType = ref(false)
+const passwordVal = ref("")
+const passwordErrVal = ref(0)
 const schema = {
   email: async (val) => {
         if (val) {
             if (isEmail(val)) {
                 if( emailErrVal.value != val) {
                     if (emailVal.value != val) {
+                        passwordErrVal.value = 0
                         try {
-                            const { data } = await usersApi.getUser(val);
+                            const { data } = await authApi.getUser(val);
                             if (data.length == 0) {
                                 emailErrVal.value = val
                                 return "Пользователь с таким email не найден";
@@ -44,7 +47,7 @@ const schema = {
             return "Заполните поле";
         }
     },
-  password: val => (val ? true : "Заполните поле"),
+  password: val => (val ? true : 'Заполните поле'),
 }
 const { errors, handleSubmit, isSubmitting, defineField} = useForm({
   validationSchema: schema
@@ -53,74 +56,78 @@ const [email, emailAttrs] = defineField('email');
 const [password, passwordAttrs] = defineField('password');
 
 const router = useRouter()
-const passwordErrRef = ref(0)
 const onSubmit = handleSubmit(async values => {
     try {
-        const { data } = await usersApi.checkUser(values.email, values.password)
-        if (data.length === 0) {
-            passwordErrRef.value++
-            if (passwordErrRef.value == 10) {
-                router.push('/forbidden')
-            }
+        const  { data } = await authApi.getUser(values.email)
+        if (data[0].disable) {
+            router.push({name: 'forbidden'})
         } else {
-            let params = {...data[0], password:values.password}
-            localStorage.setItem("user",JSON.stringify(params))
-            storeAuth.logIn()
             try {
-                const {data} = await loginApi.checkAdmin(params.email)
-                if (data.length > 0) {
-                    storeAuth.adminLogIn()
-                }
-            } catch(err) {
-                console.log(err)
-            }
-            let inviteLink = localStorage.getItem("inviteLink")
-            if (inviteLink) {
-                let invitePage = JSON.parse(inviteLink)
-                try {
-                    const {data} = await inviteApi.checkInviteLink(invitePage.id, invitePage.link)
-                    if (data.length > 0) {
+                const { data } = await authApi.logIn(values.email, values.password)
+                if (data.length === 0) {
+                    passwordErrVal.value++
+                    if (passwordErrVal.value == 10) {
                         try {
-                            const {data} = await inviteApi.checkUser(invitePage.id, params.email )
-                            if (data.length === 0) {
-                                try {
-                                    let newInviteUser = {
-                                        "login": params.login,
-                                        "email": params.email
-                                    }
-                                    const {data} = await inviteApi.setUser(params.id, newInviteUser )
-                                } catch(err) {
-                                    console.log(err)
-                                }
-                            }
-                            router.push("/catalog/"+params.id)
+                            await authApi.forbidden(values.email)
+                            router.push({name: 'forbidden'})
                         } catch (err) {
                             console.log(err)
                         }
-                    } else {
-                        router.push("/access-denied")
                     }
-                } catch(err) {
-                    console.log(err)
-                } finally {
-                    localStorage.removeItem("inviteLink")
-                }
-            } else {
-                router.push('/catalog')
-            }
-        }       
-    } catch(err) {
-      console.log(err)
-    } 
+                } else {
+                    let params = {...data[0], password:values.password}
+                    await storeAuth.logIn(params)
+                    let inviteLink = localStorage.getItem("inviteLink")
+                    if (inviteLink) {
+                        let isInvite = JSON.parse(inviteLink)
+                        try {
+                            const {data} = await inviteApi.checkInviteLink(isInvite.id, isInvite.link)
+                            if (data.length > 0) {
+                                try {
+                                    const {data} = await inviteApi.checkUser(isInvite.id, params.email )
+                                    if (data.length === 0) {
+                                        try {
+                                            let newInviteUser = {
+                                                "login": params.login,
+                                                "email": params.email
+                                            }
+                                            await inviteApi.setUser(params.id, newInviteUser )
+                                            router.push({name: 'docs', params: { id: params.id }})
+                                        } catch(err) {
+                                            console.log(err)
+                                        }
+                                    } else {
+                                        router.push({name: 'docs', params: { id: params.id }})
+                                    }                           
+                                } catch (err) {
+                                    console.log(err)
+                                }
+                            } else {
+                                router.push({name: 'access-denied'})
+                            }
+                        } catch(err) {
+                            console.log(err)
+                        } finally {
+                            localStorage.removeItem("inviteLink")
+                        }
+                    } else {
+                        router.push({name: 'catalog'})
+                    }
+                }       
+            } catch(err) {
+              console.log(err)
+            } 
+        }
+    } catch (err) {
+        console.log(err)
+    }
 });
 const togglePassVisibility = () => {
   passwordTextType.value = !passwordTextType.value
 }
 onMounted(() => {
-    const userData = localStorage.getItem('user')
-    if (userData) {
-        email.value = JSON.parse(userData).email
-        password.value = JSON.parse(userData).password
+    if (storeAuth.logged) {
+        email.value = storeAuth.userData.email
     }
 })
 watch(() => password.value, () => {
@@ -138,10 +145,10 @@ watch(() => password.value, () => {
                             <h1>вход для клиентов</h1>
                             <p class="log-p__subtitle">
                                 Если у вас нет аккаунта. Вы можете
-                                <RouterLink to="/register" class="link">Зарегистрироваться</RouterLink>
+                                <RouterLink :to=" { name: 'register' }" class="link">Зарегистрироваться</RouterLink>
                             </p>
                         </div>
-                        <form class="form"  @submit.prevent="onSubmit">
+                        <form class="form"  @submit.prevent="onSubmit" novalidate>
                             <div class="form__items">
                                 <div class="item-form">
                                     <input type="email" 
@@ -161,7 +168,7 @@ watch(() => password.value, () => {
                                         v-model="password" 
                                         v-bind="passwordAttrs"
                                     />    
-                                    <div data-error="" v-if="passwordErrRef">Пароль введен неверно. Осталось {{ 10 - passwordErrRef }} попыток</div> 
+                                    <div data-error="" v-if="passwordErrVal > 0">Пароль введен неверно. Осталось {{ 10 - passwordErrVal }} попыток</div> 
                                     <div data-error="" v-else>{{ errors.password }}</div> 
                                     <button type="button" 
                                         class="btn-reset item-form__eye" 
@@ -171,10 +178,12 @@ watch(() => password.value, () => {
                                 </div>
                             </div>
                             <p class="log-p__passRecBtn">
-                                <RouterLink to="/recovery" class="link">Забыли пароль?</RouterLink>
+                                <RouterLink :to="{ name: 'forgot-password' }" class="link">Забыли пароль?</RouterLink>
                             </p>
                             <div class="form__footer">
-                                <button class="btn-reset main-btn" type="submit" :disabled="isSubmitting"><span :class=" isSubmitting && 'loading'">Войти</span></button>
+                                <button class="btn main-btn" type="submit" :disabled="isSubmitting">
+                                    <span :class=" isSubmitting && 'loading'">Войти</span>
+                                </button>
                             </div>
                         </form>
                         <Contacts />

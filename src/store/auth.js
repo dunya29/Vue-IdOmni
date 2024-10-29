@@ -1,22 +1,51 @@
+import { authApi } from '@/api/api'
 import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
         logged: false,
-        isAdmin: false
+        userData : {
+            id: "",
+            login: "",
+            email: "",
+            password: "",
+            disable: false,
+            isAdmin: false
+        }
     }),
     actions: {
-        logIn() {
+        logIn(params) {
             this.logged = true
+            this.userData = {...this.userData, ...params}
+            localStorage.setItem("user",JSON.stringify(params))
         },
-        logOut() {
-            this.logged = false
+        async isLogIn() {
+            try {
+                await authApi.getAuth()
+                const user = localStorage.getItem("user")
+                if (user) {
+                    this.logged = true
+                    this.userData = {...this.userData, ...JSON.parse(user)}
+                }  
+            } catch(err) {
+                console.log(err)
+            }       
         },
-        adminLogIn() {
-            this.isAdmin = true
-        },
-        adminLogOut() {
-            this.isAdmin = false
+        async logOut() {
+            try {
+                await authApi.logOut()
+                this.logged = false
+                this.userData = {
+                    id: "",
+                    login: "",
+                    email: "",
+                    password: "",
+                    disable: false,
+                    isAdmin: false
+                }
+            } catch (err) {
+                console.log(err)
+            }
         }
     }
 })

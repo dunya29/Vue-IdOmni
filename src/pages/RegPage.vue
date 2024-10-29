@@ -1,5 +1,5 @@
 <script setup>
-import { usersApi } from "@/api/api";
+import { authApi } from "@/api/api";
 import Contacts from "@/components/Contacts.vue";
 import PageWrap from "@/components/PageWrap.vue";
 import { isEmail, isPassword } from "@/functions/validation";
@@ -16,7 +16,7 @@ const schema = {
             if (isEmail(val)) {
               if ( emailVal.value != val) {
                 try {
-                    const { data } = await usersApi.getUser(val);
+                    const { data } = await authApi.getUser(val);
                     if (data.length > 0) {
                       emailVal.value = val
                         return "Пользователь с таким email уже существует";
@@ -45,7 +45,6 @@ const schema = {
             : "Заполните поле",
     agree: (val) => (val === true ? true : "Требуется согласие"),
 };
-
 const { errors, handleSubmit, isSubmitting, defineField } = useForm({
     validationSchema: schema,
 });
@@ -63,10 +62,12 @@ const onSubmit = handleSubmit(async (values) => {
         email: values.email,
         login: values.login,
         password: values.password,
+        isAdmin: false,
+        disable: false
     };
     try {
-        await usersApi.setUser(data);
-        router.push("/login");
+        await authApi.setUser(data);
+        router.push({name: 'login'})
     } catch (err) {
         console.log(err);
     }
@@ -85,7 +86,7 @@ watch(() => password.value, () => {
                             <h1>Регистрация</h1>
                             <p class="log-p__subtitle">
                                 Уже зарегистрированы?
-                                <RouterLink to="/login" class="link">Войти</RouterLink>
+                                <RouterLink :to="{ name: 'login' }" class="link">Войти</RouterLink>
                             </p>
                         </div>
                         <form class="form" @submit.prevent="onSubmit">
@@ -127,7 +128,7 @@ watch(() => password.value, () => {
                                 </div>
                             </div>
                             <div class="form__footer">
-                                <div class="checkbox">
+                                <label class="item-checkbox">
                                     <input
                                         name="agree"
                                         type="checkbox"
@@ -136,10 +137,12 @@ watch(() => password.value, () => {
                                         v-model="agree"
                                         v-bind="agreeAttrs"
                                     />
-                                    <label for="result" class="checkbox-label">Даю согласие на обработку персональных данных</label>
+                                    <span>Даю согласие на обработку персональных данных</span>
                                     <div data-error="">{{ errors.agree }}</div>
-                                </div>
-                                <button class="btn-reset main-btn" type="submit" :disabled="isSubmitting"><span :class=" isSubmitting && 'loading'">Зарегистрироваться</span></button>                          
+                                </label>
+                                <button class="btn main-btn" type="submit" :disabled="isSubmitting">
+                                    <span :class=" isSubmitting && 'loading'">Зарегистрироваться</span>
+                                </button>                          
                             </div>
                         </form>
                         <Contacts />
