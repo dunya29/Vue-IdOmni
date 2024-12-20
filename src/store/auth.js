@@ -1,56 +1,46 @@
 import { authApi } from '@/api/api'
 import { defineStore } from 'pinia'
-
+const TOKEN_KEY = "creative-jwt-token"
+const userData = {
+    id: "",
+    login: "",
+    email: "",
+    password: "",
+    userRole: "user",
+    disable: false,
+    emailVerified: false
+}
 export const useAuthStore = defineStore('auth', {
+
     state: () => ({
         logged: false,
-        userData : {
-            id: "",
-            login: "",
-            email: "",
-            password: "",
-            disable: false,
-            isAdmin: false
-        }
+        userData,
+        isMounted: false
     }),
     actions: {
-        async logIn(params) {
-            try {
-                await authApi.logIn(params)
-                this.logged = true
-                this.userData = {...this.userData, ...params}
-                localStorage.setItem("user",JSON.stringify(params))
-            } catch(err) {{
-                console.log(err)
-            }}
+        auth(params) {
+            localStorage.setItem(TOKEN_KEY, params.token)
+            this.logInSuccess(params.data)
         },
-        async isLogIn() {
-            try {
-                await authApi.getAuth()
-                const user = localStorage.getItem("user")
-                if (user) {
-                    this.logged = true
-                    this.userData = {...this.userData, ...JSON.parse(user)}
-                }  
-            } catch(err) {
-                console.log(err)
-            }       
+        logInSuccess(params) {
+            this.logged = true
+            this.userData = { ...this.userData, ...params }
         },
-        async logOut() {
+        async authMe() {
             try {
-                await authApi.logOut()
-                this.logged = false
-                this.userData = {
-                    id: "",
-                    login: "",
-                    email: "",
-                    password: "",
-                    disable: false,
-                    isAdmin: false
-                }
+                const token = localStorage.getItem(TOKEN_KEY)
+                const { data } = await authApi.authMe(token)
+                this.logInSuccess(data)
             } catch (err) {
                 console.log(err)
+            } finally {
+                this.isMounted = true
             }
+        },
+        logOut() {
+            localStorage.removeItem(TOKEN_KEY)
+            this.logged = false
+            this.userData = { ...userData }
         }
     }
 })

@@ -22,7 +22,7 @@ const closeUserMod = ()=> {
         <div v-for="item in inviteUsers" :key="item.id" class="item-user">
             <span>{{ item.login }}</span>
             <button @click="()=> openUserMod(item.id)" class="btn-reset item-user__del">
-                <svg><use xlink:href="../../assets/img/icons/sprite.svg#del"></use></svg> 
+                <svg><use xlink:href="/static/img/icons/sprite.svg#del"></use></svg> 
             </button>         
         </div>
     </Accordion>

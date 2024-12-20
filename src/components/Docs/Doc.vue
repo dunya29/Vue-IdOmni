@@ -42,25 +42,25 @@ const resetContent = () => {
 </script>
 <template>
     <div class="item-doc item-doc--file">
-        <div class="item-doc__handle" v-if="storeAuth.userData.isAdmin">
-            <svg><use xlink:href="../../assets/img/icons/sprite.svg#chevron-top"></use></svg>
-            <svg><use xlink:href="../../assets/img/icons/sprite.svg#chevron-bot"></use></svg>
+        <div class="item-doc__handle" v-if="storeAuth.userData.userRole === 'admin'">
+            <svg><use xlink:href="/static/img/icons/sprite.svg#chevron-top"></use></svg>
+            <svg><use xlink:href="/static/img/icons/sprite.svg#chevron-bot"></use></svg>
         </div>
         <div class="card-anim item-doc__inner" :class="showEditor && 'res-hover'">
             <div class="item-doc__icon">
-                <img :src="'/src/assets/img/'+iconURL" alt="">
+                <img :src="'/static/img/'+iconURL" alt="">
             </div>
             <div class="item-doc__content">
                 <div class="item-doc__info">
                     <h5>
-                        <TextareaEdit v-if="storeAuth.userData.isAdmin" :initVal="name" @onChange="docNameOnChange" />
+                        <TextareaEdit v-if="storeAuth.userData.userRole === 'admin'" :initVal="name" @onChange="docNameOnChange" />
                         <span v-else>{{ name }}</span>
                     </h5> 
                     <div class="item-doc__desc">
-                        <div class="pointer item-doc__desc-empty" v-if="!content.length && storeAuth.userData.isAdmin && !showEditor" @click="() => showEditor = true"><p>Введите описание</p></div>
+                        <div class="pointer item-doc__desc-empty" v-if="!content.length && storeAuth.userData.userRole === 'admin' && !showEditor" @click="() => showEditor = true"><p>Введите описание</p></div>
                         <ReadMore v-if="!showEditor">
                             <template #default>
-                                <div class="page-content" :class="storeAuth.userData.isAdmin && 'pointer'" v-html="content" @click="() => storeAuth.userData.isAdmin ? showEditor = true : null"></div>
+                                <div class="page-content" :class="storeAuth.userData.userRole === 'admin' && 'pointer'" v-html="content" @click="() => storeAuth.userData.userRole === 'admin' ? showEditor = true : null"></div>
                             </template>
                         </ReadMore>
                         <Tiptap v-else 
@@ -78,16 +78,16 @@ const resetContent = () => {
                     </div>            
                 </div>
                 <div class="item-doc__action">
-                    <a :href="'/src/assets/docs/'+docURL" download class="item-doc__btn" v-if="download">
+                    <a :href="'/static/docs/'+docURL" download class="item-doc__btn" v-if="download">
                         <span>Скачать</span>
-                        <svg><use xlink:href="../../assets/img/icons/sprite.svg#download"></use></svg>                 
+                        <svg><use xlink:href="/static/img/icons/sprite.svg#download"></use></svg>                 
                     </a>
-                    <a :href="'/src/assets/docs/'+docURL" class="item-doc__btn" target="_blank" v-else>
+                    <a :href="'/static/docs/'+docURL" class="item-doc__btn" target="_blank" v-else>
                         <span>Открыть</span>
-                        <svg><use xlink:href="../../assets/img/icons/sprite.svg#ext-link"></use></svg>
+                        <svg><use xlink:href="/static/img/icons/sprite.svg#ext-link"></use></svg>
                     </a>
-                    <button v-if="storeAuth.userData.isAdmin" @click="()=>delDoc(id)" class="btn item-doc__btn item-doc__btn--del">
-                        <img src="../../assets/img/icons/bin.svg" alt="">
+                    <button v-if="storeAuth.userData.userRole === 'admin'" @click="()=>delDoc(id)" class="btn item-doc__btn item-doc__btn--del">
+                        <img src="/static/img/icons/bin.svg" alt="">
                     </button>  
                 </div>          
             </div>

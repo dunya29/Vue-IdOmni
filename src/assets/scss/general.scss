@@ -407,7 +407,7 @@ h6, .h6, p {
     }
     &.show-password {
       .item-form__eye {
-        background-image: url(../img/icons/eye.svg)
+        background-image: url('/static/img/icons/eye.svg')
       }
     }
   }
@@ -418,7 +418,7 @@ h6, .h6, p {
       position: absolute;
       top: 15px;
       right: 0px;
-      background: url(../img/icons/eye-slash.svg) center / contain no-repeat;
+      background: url('/static/img/icons/eye-slash.svg') center / contain no-repeat;
       visibility: hidden;
       opacity: 0;
       transition: all .3s linear;
@@ -468,10 +468,13 @@ h6, .h6, p {
     }
   }
   input:checked + span::before {
-    background: url("../img/icons/checked.svg") center/contain no-repeat;
+    background: url('/static/img/icons/checked.svg') center/contain no-repeat;
   }
 }
 .form {
+  &__error {
+    margin-bottom: 20px;
+  }
   &__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;

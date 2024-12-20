@@ -28,25 +28,20 @@ const togglePassVisibility = () => {
   passwordTextType.value = !passwordTextType.value
 }
 const onSubmit = handleSubmit(async values => {
-    const email = route.query.email
-    try {
-        await authApi.recoveryPassword(email, values.password)
-        router.push({name: "login"})
-    } catch(err) {
-        console.log(err)
-    }
-    
-});
+		const email = route.query.email
+		try {
+			await authApi.recoveryPassword(email, values.password)
+			router.push('/recovery-success')
+		} catch (err) {
+			console.log(err)
+		}
+	})
 onMounted(() => {
     if (storeAuth.logged) {
         router.push({name: 'catalog'})
     }
 })
-watch(()=> storeAuth.logged, () => {
-    if (storeAuth.logged) {
-        router.push({name: 'catalog'})
-    }
-})
+
 watch(() => password.value, () => {
   passwordShow.value = password.value.length > 0 ? true : false
 })

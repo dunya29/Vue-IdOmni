@@ -3,7 +3,7 @@ const props = defineProps({
     id: Number,
     title: String,
     item: Array,
-    isAdmin: Boolean
+    userRole: String
 })
 import { computed, ref, watch } from 'vue';
 import Doc from './Doc.vue';
@@ -43,11 +43,11 @@ watch(()=>props.item, () => {
     <div class="sec-docs">
         <div class="sec-docs__top">
             <h2 class="sec-docs__title">  
-                <TextareaEdit v-if="isAdmin" :initVal="title" @onChange="secNameOnChange"/> 
+                <TextareaEdit v-if="userRole === 'admin'" :initVal="title" @onChange="secNameOnChange"/> 
                 <span v-else>{{ title }}</span>
             </h2> 
-            <button class="btn primary-btn" v-if="isAdmin" @click="() => isAaddDocMod = true">
-                <span>Добавить документ<svg><use xlink:href="../../assets/img/icons/sprite.svg#plus"></use></svg></span>
+            <button class="btn primary-btn" v-if="userRole === 'admin'" @click="() => isAaddDocMod = true">
+                <span>Добавить документ<svg><use xlink:href="/static/img/icons/sprite.svg#plus"></use></svg></span>
             </button>
             <Teleport to="body">
                 <transition name="modal-fade">
@@ -73,6 +73,6 @@ watch(()=>props.item, () => {
                     />
                 </template>
         </draggableComponent>
-        <button class="btn sec-docs__del" v-if="isAdmin" @click="()=>emit('delSec', id)"><svg><use xlink:href="../../assets/img/icons/sprite.svg#plus"></use></svg>Удалить раздел</button>
+        <button class="btn sec-docs__del" v-if="userRole === 'admin'" @click="()=>emit('delSec', id)"><svg><use xlink:href="/static/img/icons/sprite.svg#plus"></use></svg>Удалить раздел</button>
     </div>
 </template>

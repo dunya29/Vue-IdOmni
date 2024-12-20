@@ -3,7 +3,6 @@ import {nextTick, ref, watch } from 'vue';
 
 const props = defineProps({
     index: Number,
-    title: String,
     isActive: Boolean
 })
 const accordRef = ref(null)
@@ -50,10 +49,7 @@ watch(()=>props.isActive, () => {
 <template>
     <div class="accordion" :class="isAnimated && 'open'">
         <div class="accordion__header" @click="()=>toggleAccord()">
-            <h3>{{ title }}</h3> 
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M22.2459 9.04585L12 19.2917L1.75414 9.04585L3.45119 7.34879L10.8 14.6976L12 15.9832L13.2 14.6976L20.5488 7.34879L22.2459 9.04585Z"/>
-            </svg>   
+            <slot name="header"></slot>
         </div>
         <div class="accordion__body" ref="accordRef" v-if="isActive">
             <div class="accordion__content">

@@ -119,13 +119,13 @@ onMounted(fetchPages)
                                 :key="item.id"
                                 :id="item.id"
                                 :title="item.title"
-                                :isAdmin="storeAuth.userData.isAdmin"
+                                :userRole="storeAuth.userData.userRole"
                                 @pageNameOnChange="pageNameOnChange"
                                 @delPage="delPage"/>
                             </template>
                     </draggableComponent>
                 </div>
-                <AddPage v-if="storeAuth.userData.isAdmin" 
+                <AddPage v-if="storeAuth.userData.userRole === 'admin'" 
                 ref="addPageForm"
                 :addPageLoading="addPageLoading"
                 @addNewPage="addNewPage"

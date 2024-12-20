@@ -30,7 +30,7 @@ onUnmounted(() => {
         <div class="custom-scroll modal__overlay">
             <div class="modal__content" ref="modalRef">
                 <button @click="closeModal" class="btn-reset btn-close modal__close" aria-label="Закрыть всплывающее окно">
-                    <svg><use xlink:href="../assets/img/icons/sprite.svg#close"></use></svg>
+                    <svg><use xlink:href="/static/img/icons/sprite.svg#close"></use></svg>
                 </button>
                 <div class="modal__scroll">
                     <div class="modal__top">

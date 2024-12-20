@@ -36,7 +36,7 @@
 .log-p {
     min-height: 100dvh;
     padding: 90px 0 40px;
-    background: url(../img/login-bg.jpg) center / cover no-repeat;
+    background: url('../img/login-bg.jpg') center / cover no-repeat;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -65,7 +65,7 @@
                 flex: 0 0 60px;
                 width: 60px;
                 height: 60px;
-                background: url(../img/icons/error-icon.svg) center/contain no-repeat;
+                background: url('/static/img/icons/error-icon.svg') center/contain no-repeat;
                 margin-right: 20px;
                 @media (max-width: $bp3) {
                     margin: 0 0 20px;
@@ -130,6 +130,18 @@
     &__passRecBtn {
         text-align: right;
         margin-top: 20px;
+    }
+    &__btns {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -10px;
+        @media (max-width: $bp4) {
+            flex-direction: column;
+        }
+        .btn {
+            flex: 1;
+            margin: 10px;
+        }
     }
 }
 .auth {

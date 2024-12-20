@@ -37,7 +37,7 @@ const pageFormOnSubmit = () => {
                 </div>
             </div>
             <button class="btn primary-btn">
-                <span :class="addPageLoading && 'loading'">Добавить страницу<svg><use xlink:href="../../assets/img/icons/sprite.svg#plus"></use></svg></span>            
+                <span :class="addPageLoading && 'loading'">Добавить страницу<svg><use xlink:href="/static/img/icons/sprite.svg#plus"></use></svg></span>            
             </button>
         </form>
     </div>

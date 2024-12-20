@@ -43,11 +43,11 @@ let file = {
     format: ".mp4, .webm, .doc, .docx, .pdf, .xls, .xlt, .xla, .xlsx",
     size: 100 * 1024 * 1024
 }
-const setFileFieldValue = (val) => {
-    docFormFields[2].value = val      
+const setFileFieldValue = (name, val) => {
+    docFormFields[name].value = val      
 }
-const fileFieldIsError = (val) => {
-    docFormFields[2].error = val
+const fileFieldIsError = (name,val) => {
+    docFormFields[name].error = val
 }
 const docFormOnSubmit = async () => {
     docFormFields.forEach(item => {
@@ -62,7 +62,7 @@ const docFormOnSubmit = async () => {
             "sectionTitle": props.title,
             "name": docFormFields[0].value,
             "content": docFormFields[1].value, 
-            "docURL": docFormFields[2].value[0],
+            "docURL": docFormFields[2].value[0].url,
             "iconURL": "/icons/doc.svg",
             "download": false,
             "orderId": props.maxOrderId + 1
@@ -96,7 +96,7 @@ const docFormOnSubmit = async () => {
                 <div class="item-form">
                     <input type="text" name="content" placeholder="Описание" v-model="docFormFields[1].value">
                 </div>
-                <FileForm ref="fileForm" :types="file.types" :emptyError="docFormFields[2].error" :format="file.format" :maxSize="file.size" @setFileFieldValue="setFileFieldValue" @fileFieldIsError="fileFieldIsError"/>           
+                <FileForm ref="fileForm" :types="file.types" name="2" :emptyError="docFormFields[2].error" :format="file.format" :maxSize="file.size" @setFileFieldValue="setFileFieldValue" @fileFieldIsError="fileFieldIsError"/>           
             </div>
             <div class="form__footer">
                 <button type="submit" class="btn primary-btn" :disabled="loading">
